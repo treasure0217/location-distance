@@ -41,7 +41,11 @@ const FilterDropdown: React.FC<Props> = ({ className }) => {
           ? prev.filter((option) => option !== value)
           : [...prev, value],
       );
-    } else if (index !== undefined && checkOptions[index]?.options) {
+    } else if (
+      index !== undefined &&
+      checkOptions[index] &&
+      checkOptions[index].options
+    ) {
       setPlaceTypes(
         checkOptions[index].options.reduce(
           (acc, cur) => acc + (prev.includes(cur.value) ? 1 : 0),
