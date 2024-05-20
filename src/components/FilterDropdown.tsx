@@ -44,42 +44,43 @@ const FilterDropdown: React.FC<Props> = ({ className }) => {
     } else if (
       index !== undefined &&
       checkOptions[index] &&
-      checkOptions[index].options
+      Array.isArray(checkOptions[index].options)
     ) {
+      const options = checkOptions[index].options;
+
+      if (!options) return;
+
+      const count = options.reduce(
+        (acc, cur) => acc + (prev.includes(cur.value) ? 1 : 0),
+        0,
+      );
+
+      // Update placeTypes based on the number of selected options
       setPlaceTypes(
-        checkOptions[index].options.reduce(
-          (acc, cur) => acc + (prev.includes(cur.value) ? 1 : 0),
-          0,
-        ) === 0
-          ? [
-              ...prev,
-              ...checkOptions[index].options.map((option) => option.value),
-            ]
+        count === 0
+          ? [...prev, ...options.map((option) => option.value)]
           : prev.filter((option) => {
-              if (checkOptions[index]?.options) {
-                for (const _option of checkOptions[index]?.options) {
-                  if (option === _option.value) {
-                    return false;
-                  }
-                }
-              }
-              return true;
+              return !options.some((_option) => option === _option.value);
             }),
       );
     }
   };
 
   const handleCheckChecked = (index: number) => {
-    if (checkOptions[index].options) {
-      for (const option of checkOptions[index].options) {
+    const checkOption = checkOptions[index];
+
+    if (checkOption && Array.isArray(checkOption.options)) {
+      for (const option of checkOption.options) {
         if (placeTypes.includes(option.value)) {
           return true;
         }
       }
       return false;
-    } else {
-      return placeTypes.includes(checkOptions[index].value) ? true : false;
+    } else if (checkOption) {
+      return placeTypes.includes(checkOption.value);
     }
+
+    return false;
   };
 
   const handleApplyFilter = useCallback(() => {

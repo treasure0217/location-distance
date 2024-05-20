@@ -1,4 +1,8 @@
-const checkOptions = [
+const checkOptions: {
+  label: string;
+  value: string;
+  options?: { label: string; value: string }[];
+}[] = [
   {
     label: 'Essentials',
     value: 'Essentials',
