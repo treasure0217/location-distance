@@ -9,6 +9,7 @@ const initialState: IMapSlice = {
     radius: 10,
     placeTypes: [],
   },
+  placesArray: [],
 };
 
 const mapSlice = createSlice({
@@ -27,9 +28,14 @@ const mapSlice = createSlice({
       state.filter = action.payload;
       return state;
     },
+    setPlacesArray(state, action) {
+      state.placesArray = [...action.payload];
+      return state;
+    },
   },
 });
 
-export const { setCenter, setZoom, setFilter } = mapSlice.actions;
+export const { setCenter, setZoom, setFilter, setPlacesArray } =
+  mapSlice.actions;
 
 export default mapSlice.reducer;

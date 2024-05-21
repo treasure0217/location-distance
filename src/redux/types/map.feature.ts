@@ -1,11 +1,9 @@
 export interface IMapSlice {
-  center: {
-    lat: number;
-    lng: number;
-  };
+  center: IGeo;
   zoom: number;
-  filter: {
-    radius: number;
-    placeTypes: string[];
-  };
+  filter: IPlaceFilter;
+  placesArray: {
+    placeType: string;
+    places: Record<string, any>[];
+  }[];
 }

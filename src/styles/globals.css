@@ -33,3 +33,7 @@ input {
 .rc-slider-mark-text {
   @apply !text-black;
 }
+
+.lazy-load-image-loaded.blur {
+  @apply blur-0;
+}

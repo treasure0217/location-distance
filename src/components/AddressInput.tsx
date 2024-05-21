@@ -22,17 +22,21 @@ const AddressInput: React.FC<Props> = ({ className }) => {
   const [isPending, startTransition] = useTransition();
   const dispatch = useAppDispatch();
 
-  const fetchSuggestions = debounce(async (input: string) => {
-    if (input.trim() === '') {
-      setSuggestions([]);
-      return;
-    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const fetchSuggestions = useCallback(
+    debounce(async (input: string) => {
+      if (input.trim() === '') {
+        setSuggestions([]);
+        return;
+      }
 
-    const response = await fetch(`/api/address-autocomplete?input=${input}`);
-    const suggestions = await response.json();
+      const response = await fetch(`/api/address-autocomplete?input=${input}`);
+      const suggestions = await response.json();
 
-    setSuggestions(suggestions);
-  }, 300);
+      setSuggestions(suggestions);
+    }, 300),
+    [],
+  );
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setAddress(e.target.value);
@@ -59,8 +63,6 @@ const AddressInput: React.FC<Props> = ({ className }) => {
       const response = await fetch(`/api/address-info?address=${address}`);
       const placeInfo = JSON.parse(await response.text());
 
-      console.log(placeInfo);
-
       if (!placeInfo.geometry?.location) {
         toast.error(
           'Invalid address, please choose the address from the dropdown',
@@ -69,7 +71,7 @@ const AddressInput: React.FC<Props> = ({ className }) => {
       }
 
       dispatch(setCenter(placeInfo.geometry.location));
-      dispatch(setZoom(16));
+      dispatch(setZoom(17));
     });
   };
 
@@ -78,15 +80,21 @@ const AddressInput: React.FC<Props> = ({ className }) => {
       <input
         type='text'
         placeholder='Enter Address'
-        className='h-10 w-full rounded-full border border-gray-500 py-2 pl-4 pr-14'
+        className='h-10 w-full rounded-full border border-gray-500 py-2 pl-4 pr-14 disabled:cursor-not-allowed disabled:opacity-50'
+        disabled={isPending}
         value={address}
         onChange={handleChange}
       />
       <button
         type='submit'
         className='absolute right-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-green-700'
+        disabled={isPending}
       >
-        <Icon icon='mingcute:search-2-fill' className='text-xl text-white' />
+        {!isPending ? (
+          <Icon icon='mingcute:search-2-fill' className='text-xl text-white' />
+        ) : (
+          <Icon icon='eos-icons:loading' className='text-xl text-white' />
+        )}
       </button>
       {suggestions.length > 0 && (
         <ul className='absolute -bottom-2 w-full translate-y-full rounded bg-white py-1 shadow-[0px_0px_2px_#0008]'>

@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+import 'react-loading-skeleton/dist/skeleton.css';
 import '@/styles/globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
