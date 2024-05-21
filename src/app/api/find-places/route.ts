@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import {
   fetchDirections,
   fetchDriveTimes,
@@ -6,7 +6,7 @@ import {
 } from '@/utils/fetchGoogleApi';
 import { getPlaceType } from '@/utils/getPlaceType';
 
-export async function POST(req: NextResponse) {
+export async function POST(req: NextRequest) {
   const { address, radius, placeTypes } = await req.json();
 
   const placesArray = await Promise.all(
