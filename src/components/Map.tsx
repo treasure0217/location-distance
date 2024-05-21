@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { Fragment } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import {
   GoogleMap,
@@ -21,6 +21,7 @@ const Map: React.FC<Props> = ({ className }) => {
   const { center, zoom, placesArray, selectedPlaceId } = useAppSelector(
     (state) => state.map,
   );
+  const [polyLines, setPolyLines] = useState<any[]>([]);
 
   const decodePolyline = (encoded: string) => {
     if (
@@ -43,6 +44,21 @@ const Map: React.FC<Props> = ({ className }) => {
     return path;
   };
 
+  useEffect(() => {
+    const decodedPolyLines = [];
+    for (let places of placesArray) {
+      for (let place of places.places) {
+        decodedPolyLines.push({
+          place_id: place.place_id,
+          path: decodePolyline(place.route),
+          strokeColor: place.strokeColor,
+        });
+      }
+    }
+
+    setPolyLines(decodedPolyLines);
+  }, [placesArray]);
+
   return (
     <div className={cx('h-full', className)}>
       <LoadScript
@@ -58,57 +74,58 @@ const Map: React.FC<Props> = ({ className }) => {
             <OverlayView
               position={center}
               mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+              zIndex={100}
             >
               <div className='flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 border-red-500'>
                 <Icon icon='fa:home' className='text-sm' />
               </div>
             </OverlayView>
           )}
+          {[...polyLines].map((polyLine, i) => (
+            <Polyline
+              key={i}
+              path={polyLine.path}
+              options={{
+                strokeColor: polyLine.strokeColor,
+                strokeOpacity: 100,
+                strokeWeight:
+                  selectedPlaceId === ''
+                    ? 2
+                    : selectedPlaceId === polyLine.place_id
+                      ? 5
+                      : 2,
+                zIndex:
+                  selectedPlaceId === ''
+                    ? 3
+                    : selectedPlaceId === polyLine.place_id
+                      ? 5
+                      : 3,
+              }}
+            />
+          ))}
           {placesArray.map((places, i) => (
             <Fragment key={i}>
-              {places &&
-                places.places.length > 0 &&
-                places.places.map((place) => (
-                  <Fragment key={place.place_id}>
-                    <Polyline
-                      path={decodePolyline(place.route)}
-                      options={{
-                        strokeColor: place.strokeColor,
-                        strokeOpacity: 100,
-                        strokeWeight:
-                          selectedPlaceId === ''
-                            ? 2
-                            : selectedPlaceId === place.place_id
-                              ? 5
-                              : 2,
-                        zIndex:
-                          selectedPlaceId === ''
-                            ? 3
-                            : selectedPlaceId === place.place_id
-                              ? 5
-                              : 3,
-                      }}
+              {places.places.map((place) => (
+                <OverlayView
+                  key={`${i}-${place.place_id}`}
+                  position={place.geometry.location}
+                  mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+                >
+                  <div className='flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border-2 border-white shadow-md'>
+                    <Image
+                      src={
+                        place.photos?.[0]?.photo_reference
+                          ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${80}&photoreference=${place.photos?.[0]?.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
+                          : '/images/image-placeholder.jpg'
+                      }
+                      alt={place.name}
+                      width={80}
+                      height={80}
+                      className='h-full w-full rounded-full object-cover'
                     />
-                    <OverlayView
-                      position={place.geometry.location}
-                      mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
-                    >
-                      <div className='flex h-10 w-10 -translate-x-1/2 -translate-y-1/2 items-center justify-center overflow-hidden rounded-full border-2 border-white shadow-md'>
-                        <Image
-                          src={
-                            place.photos?.[0]?.photo_reference
-                              ? `https://maps.googleapis.com/maps/api/place/photo?maxwidth=${80}&photoreference=${place.photos?.[0]?.photo_reference}&key=${GOOGLE_MAPS_API_KEY}`
-                              : '/images/image-placeholder.jpg'
-                          }
-                          alt={place.name}
-                          width={80}
-                          height={80}
-                          className='h-full w-full rounded-full object-cover'
-                        />
-                      </div>
-                    </OverlayView>
-                  </Fragment>
-                ))}
+                  </div>
+                </OverlayView>
+              ))}
             </Fragment>
           ))}
         </GoogleMap>
