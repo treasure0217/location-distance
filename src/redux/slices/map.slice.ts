@@ -10,6 +10,7 @@ const initialState: IMapSlice = {
     placeTypes: [],
   },
   placesArray: [],
+  selectedPlaceId: '',
 };
 
 const mapSlice = createSlice({
@@ -32,10 +33,18 @@ const mapSlice = createSlice({
       state.placesArray = [...action.payload];
       return state;
     },
+    setSelectedPlaceId(state, action) {
+      state.selectedPlaceId = action.payload;
+    },
   },
 });
 
-export const { setCenter, setZoom, setFilter, setPlacesArray } =
-  mapSlice.actions;
+export const {
+  setCenter,
+  setZoom,
+  setFilter,
+  setPlacesArray,
+  setSelectedPlaceId,
+} = mapSlice.actions;
 
 export default mapSlice.reducer;

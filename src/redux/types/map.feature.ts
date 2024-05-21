@@ -6,4 +6,5 @@ export interface IMapSlice {
     placeType: string;
     places: Record<string, any>[];
   }[];
+  selectedPlaceId: string;
 }

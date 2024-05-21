@@ -85,6 +85,7 @@ const FilterDropdown: React.FC<Props> = ({ className }) => {
 
   const handleApplyFilter = useCallback(() => {
     dispatch(setFilter({ radius, placeTypes }));
+    setIsOpen(false);
   }, [dispatch, placeTypes, radius]);
 
   return (

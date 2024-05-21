@@ -5,6 +5,7 @@ import {
   fetchNearByPlaces,
 } from '@/utils/fetchGoogleApi';
 import { getPlaceType } from '@/utils/getPlaceType';
+import { getRandomColor } from '@/utils/getRandomColor';
 
 export async function POST(req: NextRequest) {
   const { address, radius, placeTypes } = await req.json();
@@ -39,6 +40,7 @@ export async function POST(req: NextRequest) {
             address,
             places[i].geometry.location,
           );
+          places[i].strokeColor = getRandomColor();
         }
 
         return {
@@ -46,6 +48,7 @@ export async function POST(req: NextRequest) {
           places,
         };
       } catch (err) {
+        console.log(err);
         return { placeType: getPlaceType(placeType), places: [] };
       }
     }),

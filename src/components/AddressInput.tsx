@@ -71,7 +71,7 @@ const AddressInput: React.FC<Props> = ({ className }) => {
       }
 
       dispatch(setCenter(placeInfo.geometry.location));
-      dispatch(setZoom(17));
+      dispatch(setZoom(14));
     });
   };
 

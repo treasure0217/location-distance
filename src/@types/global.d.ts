@@ -18,5 +18,6 @@ declare global {
     distance?: number;
     place_id: string;
     route?: any;
+    strokeColor?: string
   }
 }

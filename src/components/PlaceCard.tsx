@@ -3,6 +3,9 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { Icon } from '@iconify/react/dist/iconify.js';
 import cx from 'classnames';
 import { GOOGLE_MAPS_API_KEY } from '@/config/env';
+import useAppDispatch from '@/hooks/useAppDispatch';
+import useAppSelector from '@/hooks/useAppSelector';
+import { setSelectedPlaceId } from '@/redux/slices/map.slice';
 
 interface Props {
   className?: string;
@@ -10,12 +13,25 @@ interface Props {
 }
 
 const PlaceCard: React.FC<Props> = ({ className, place }) => {
+  const dispatch = useAppDispatch();
+  const placeId = useAppSelector((state) => state.map.selectedPlaceId);
+
+  const handleSelectCard = () => {
+    dispatch(
+      setSelectedPlaceId(placeId === place.place_id ? '' : place.place_id),
+    );
+  };
+
   return (
     <div
       className={cx(
-        'overflow-hidden rounded border border-gray-500/20 shadow-sm',
+        'group cursor-pointer overflow-hidden rounded border shadow-sm transition-all ease-in-out hover:border-gray-500',
         className,
+        placeId === place.place_id
+          ? 'border-gray-500 bg-gray-500/10'
+          : 'border-gray-500/20',
       )}
+      onClick={handleSelectCard}
     >
       <LazyLoadImage
         src={
@@ -24,7 +40,7 @@ const PlaceCard: React.FC<Props> = ({ className, place }) => {
             : '/images/image-placeholder.jpg'
         }
         alt={place.name}
-        wrapperClassName='!h-40 !w-full flex-shrink-0 !block'
+        wrapperClassName='!h-40 !w-full flex-shrink-0 !block overflow-hidden'
         className='!h-full !w-full !object-cover'
         delayMethod='debounce'
         effect='blur'

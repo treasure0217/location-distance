@@ -57,7 +57,7 @@ export const fetchDirections = async (origin: IGeo, destination: IGeo) => {
       },
     });
 
-    return response.data;
+    return response.data.routes[0].overview_polyline.points;
   } catch (err) {
     throw new Error('Error while fetching directions');
   }
