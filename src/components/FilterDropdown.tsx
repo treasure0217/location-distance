@@ -88,6 +88,12 @@ const FilterDropdown: React.FC<Props> = ({ className }) => {
     setIsOpen(false);
   }, [dispatch, placeTypes, radius]);
 
+  const handleClearFilter = () => {
+    setPlaceTypes([]);
+    dispatch(setFilter({ radius: 10, placeTypes: [] }));
+    setIsOpen(false);
+  };
+
   return (
     <div className={cx('relative', className)} ref={ref}>
       <button
@@ -149,12 +155,20 @@ const FilterDropdown: React.FC<Props> = ({ className }) => {
               </div>
             ))}
           </div>
-          <button
-            className='ml-auto block rounded border border-gray-500/50 px-4 py-1 font-medium'
-            onClick={handleApplyFilter}
-          >
-            Apply
-          </button>
+          <div className='ml-auto flex w-fit gap-4'>
+            <button
+              className='block rounded border text-red-500 border-red-500/50 px-4 py-1 font-medium'
+              onClick={handleClearFilter}
+            >
+              Clear Filter
+            </button>
+            <button
+              className='block rounded border border-gray-500/50 px-4 py-1 font-medium'
+              onClick={handleApplyFilter}
+            >
+              Apply
+            </button>
+          </div>
         </div>
       </div>
     </div>

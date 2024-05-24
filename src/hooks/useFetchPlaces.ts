@@ -12,7 +12,12 @@ const useFetchPlaces = (address: IGeo, filter: IPlaceFilter) => {
   }, [address, filter]);
 
   const fetchPlaces = (address: IGeo, filter: IPlaceFilter) => {
-    if (filter.placeTypes.length === 0 || address == usCenter) {
+    if (address == usCenter) {
+      return;
+    }
+
+    if (filter.placeTypes.length === 0) {
+      setPlacesArray([]);
       return;
     }
 
